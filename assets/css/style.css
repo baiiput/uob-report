@@ -986,11 +986,18 @@ button, a, input, select, textarea {
 .desc-kit {
     font-family: 'Courier New', monospace;
     font-size: 0.8rem;
-    background-color: var(--bg-tertiary);
-    padding: 0.15rem 0.5rem;
-    border-radius: 0.25rem;
-    color: var(--text-primary);
-    font-weight: 500;
+    background-color: #1e293b;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.3rem;
+    color: #f1f5f9;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .desc-kit {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    border: 1px solid #334155;
 }
 
 .desc-separator {
