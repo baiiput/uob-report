@@ -137,7 +137,20 @@ const elements = {
 
     // Toast
     toast: document.getElementById('toast'),
-    toastMessage: document.getElementById('toastMessage')
+    toastMessage: document.getElementById('toastMessage'),
+
+    // Structured Description Form Elements
+    autoModeFields: document.getElementById('autoModeFields'),
+    manualModeField: document.getElementById('manualModeField'),
+    tipeTransaksi: document.getElementById('tipeTransaksi'),
+    topUpField: document.getElementById('topUpField'),
+    topUpBank: document.getElementById('topUpBank'),
+    clientFields: document.getElementById('clientFields'),
+    namaClient: document.getElementById('namaClient'),
+    kitContainer: document.getElementById('kitContainer'),
+    addKitBtn: document.getElementById('addKitBtn'),
+    kodePayment: document.getElementById('kodePayment'),
+    descriptionPreview: document.getElementById('descriptionPreview')
 };
 
 // Initialize app
@@ -382,6 +395,208 @@ function initEventListeners() {
             openModal();
         }
     });
+
+    // Structured Description Form Events
+    initStructuredFormEvents();
+}
+
+// Initialize Structured Description Form Events
+function initStructuredFormEvents() {
+    // Mode toggle
+    document.querySelectorAll('input[name="descMode"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const isAuto = e.target.value === 'auto';
+            elements.autoModeFields.style.display = isAuto ? 'block' : 'none';
+            elements.manualModeField.style.display = isAuto ? 'none' : 'block';
+        });
+    });
+
+    // Transaction type change
+    elements.tipeTransaksi.addEventListener('change', handleTransactionTypeChange);
+
+    // Add kit button
+    elements.addKitBtn.addEventListener('click', addKitRow);
+
+    // Remove kit button (delegated)
+    elements.kitContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-remove-kit')) {
+            e.target.closest('.kit-row').remove();
+            updateRemoveButtons();
+            updateDescriptionPreview();
+        }
+    });
+
+    // Update preview on input changes
+    elements.namaClient.addEventListener('input', updateDescriptionPreview);
+    elements.kodePayment.addEventListener('change', updateDescriptionPreview);
+    elements.tipeTransaksi.addEventListener('change', updateDescriptionPreview);
+    elements.topUpBank.addEventListener('change', updateDescriptionPreview);
+
+    // Kit/Paket input changes (delegated)
+    elements.kitContainer.addEventListener('input', updateDescriptionPreview);
+    elements.kitContainer.addEventListener('change', updateDescriptionPreview);
+}
+
+// Handle transaction type change
+function handleTransactionTypeChange() {
+    const type = elements.tipeTransaksi.value;
+    const isTopUp = type === 'Top Up';
+
+    elements.topUpField.style.display = isTopUp ? 'block' : 'none';
+    elements.clientFields.style.display = isTopUp ? 'none' : 'block';
+
+    updateDescriptionPreview();
+}
+
+// Add new kit row
+function addKitRow() {
+    const kitRow = document.createElement('div');
+    kitRow.className = 'kit-row';
+    kitRow.innerHTML = `
+        <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
+        <select class="paket-select">
+            <option value="reguler">Reguler</option>
+            <option value="roam">Roam</option>
+            <option value="lite">Lite</option>
+            <option value="residensial">Residensial</option>
+            <option value="local">Local</option>
+            <option value="internasional">Internasional</option>
+        </select>
+        <button type="button" class="btn btn-sm btn-secondary btn-remove-kit">✕</button>
+    `;
+    elements.kitContainer.appendChild(kitRow);
+    updateRemoveButtons();
+    kitRow.querySelector('.kit-input').focus();
+}
+
+// Update remove buttons visibility
+function updateRemoveButtons() {
+    const rows = elements.kitContainer.querySelectorAll('.kit-row');
+    rows.forEach((row, index) => {
+        const removeBtn = row.querySelector('.btn-remove-kit');
+        removeBtn.style.display = rows.length > 1 ? 'inline-flex' : 'none';
+    });
+}
+
+// Update description preview
+function updateDescriptionPreview() {
+    const type = elements.tipeTransaksi.value;
+    let preview = '';
+
+    if (type === 'Top Up') {
+        const bank = elements.topUpBank.value;
+        preview = `Top Up ${bank}`;
+    } else if (type === 'Lainnya') {
+        preview = '(Gunakan mode manual untuk deskripsi custom)';
+    } else {
+        const nama = elements.namaClient.value.trim();
+        const kode = elements.kodePayment.value;
+
+        // Get all kits
+        const kitRows = elements.kitContainer.querySelectorAll('.kit-row');
+        const kits = [];
+        kitRows.forEach(row => {
+            const kitInput = row.querySelector('.kit-input').value.trim().toUpperCase();
+            const paket = row.querySelector('.paket-select').value;
+            if (kitInput) {
+                kits.push({ kit: kitInput, paket });
+            }
+        });
+
+        if (nama || kits.length > 0) {
+            preview = `${type} ${nama}`;
+            if (kits.length > 0) {
+                kits.forEach(k => {
+                    preview += `\n→ ${k.kit} - ${capitalizeFirst(k.paket)}`;
+                });
+            }
+            if (kode) {
+                preview += `\n→ ${kode}`;
+            }
+        } else {
+            preview = '-';
+        }
+    }
+
+    elements.descriptionPreview.textContent = preview;
+}
+
+// Capitalize first letter
+function capitalizeFirst(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Generate description from structured form
+function generateDescription() {
+    const type = elements.tipeTransaksi.value;
+
+    if (type === 'Top Up') {
+        return `Top Up ${elements.topUpBank.value}`;
+    }
+
+    if (type === 'Lainnya') {
+        return elements.deskripsi.value.trim();
+    }
+
+    const nama = elements.namaClient.value.trim();
+    const kode = elements.kodePayment.value;
+
+    // Get all kits
+    const kitRows = elements.kitContainer.querySelectorAll('.kit-row');
+    const kits = [];
+    kitRows.forEach(row => {
+        const kitInput = row.querySelector('.kit-input').value.trim().toUpperCase();
+        const paket = row.querySelector('.paket-select').value;
+        if (kitInput) {
+            kits.push({ kit: kitInput, paket });
+        }
+    });
+
+    // Build description
+    let desc = `${type} ${nama}`;
+    kits.forEach(k => {
+        desc += ` (${k.kit}) - ${k.paket}`;
+    });
+    desc += ` (${kode})`;
+
+    return desc;
+}
+
+// Reset structured form
+function resetStructuredForm() {
+    // Reset to auto mode
+    document.querySelector('input[name="descMode"][value="auto"]').checked = true;
+    elements.autoModeFields.style.display = 'block';
+    elements.manualModeField.style.display = 'none';
+
+    // Reset fields
+    elements.tipeTransaksi.value = 'Payment';
+    elements.topUpBank.value = 'UOB';
+    elements.namaClient.value = '';
+    elements.kodePayment.value = '3402';
+
+    // Reset kit container to single row
+    elements.kitContainer.innerHTML = `
+        <div class="kit-row">
+            <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
+            <select class="paket-select">
+                <option value="reguler">Reguler</option>
+                <option value="roam">Roam</option>
+                <option value="lite">Lite</option>
+                <option value="residensial">Residensial</option>
+                <option value="local">Local</option>
+                <option value="internasional">Internasional</option>
+            </select>
+            <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:none;">✕</button>
+        </div>
+    `;
+
+    // Show client fields, hide top up field
+    elements.clientFields.style.display = 'block';
+    elements.topUpField.style.display = 'none';
+
+    // Reset preview
+    elements.descriptionPreview.textContent = '-';
 }
 
 // Format rupiah on input
@@ -653,7 +868,7 @@ function renderTransactions() {
         <tr>
             <td>${startNo + index}</td>
             <td>${formatDate(trans.tanggal)}</td>
-            <td class="description-cell">${escapeHtml(trans.deskripsi)}</td>
+            <td class="description-cell">${formatDescriptionDisplay(trans.deskripsi)}</td>
             <td class="text-right ${trans.pemasukan > 0 ? 'amount-income' : ''}">
                 ${trans.pemasukan > 0 ? formatRupiah(trans.pemasukan) : '-'}
             </td>
@@ -673,6 +888,141 @@ function renderTransactions() {
             ` : ''}
         </tr>
     `).join('');
+}
+
+// Format description for display with visual styling
+function formatDescriptionDisplay(desc) {
+    if (!desc) return '-';
+
+    const parsed = parseDescriptionForDisplay(desc);
+
+    if (!parsed.success) {
+        // Return plain text for unrecognized formats
+        return escapeHtml(desc);
+    }
+
+    // Build structured HTML
+    let html = '<div class="desc-structured">';
+
+    // Header with type and client name
+    html += '<div class="desc-header">';
+    html += `<span class="desc-type ${parsed.typeClass}">${escapeHtml(parsed.type)}</span>`;
+    if (parsed.client) {
+        html += `<span class="desc-client">${escapeHtml(parsed.client)}</span>`;
+    }
+    html += '</div>';
+
+    // Kit and paket details
+    if (parsed.kits && parsed.kits.length > 0) {
+        html += '<div class="desc-details">';
+        parsed.kits.forEach(kit => {
+            html += '<div class="desc-kit-row">';
+            html += `<span class="desc-kit">${escapeHtml(kit.kit)}</span>`;
+            if (kit.paket) {
+                html += `<span class="desc-paket ${kit.paket.toLowerCase()}">${escapeHtml(capitalizeFirst(kit.paket))}</span>`;
+            }
+            html += '</div>';
+        });
+
+        // Location code
+        if (parsed.kode) {
+            html += `<div class="desc-kode">${escapeHtml(parsed.kode)}</div>`;
+        }
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
+// Parse description for display purposes
+function parseDescriptionForDisplay(desc) {
+    if (!desc) return { success: false };
+
+    // Handle Top Up
+    const topUpMatch = desc.match(/^Top\s*Up\s+(.+)$/i);
+    if (topUpMatch) {
+        return {
+            success: true,
+            type: 'Top Up',
+            typeClass: 'topup',
+            client: topUpMatch[1].trim()
+        };
+    }
+
+    // Handle Refund
+    const refundMatch = desc.match(/^Refund\s+(?:payment\s+)?\(?(KIT[A-Z0-9]+)\)?/i);
+    if (refundMatch) {
+        return {
+            success: true,
+            type: 'Refund',
+            typeClass: 'refund',
+            kits: [{ kit: refundMatch[1].toUpperCase() }]
+        };
+    }
+
+    // Handle Payment/Aktivasi patterns
+    // Pattern variations:
+    // "Payment Nama (KIT123) - paket (kode)"
+    // "Payment Nama (10) (KIT123) - paket (kode)"
+    // "Payment Nama (KIT123) (KIT456) - paket, paket2 (kode)"
+
+    const typeMatch = desc.match(/^(Payment|Aktivasi)\s+/i);
+    if (!typeMatch) return { success: false };
+
+    const type = capitalizeFirst(typeMatch[1].toLowerCase());
+    const typeClass = type.toLowerCase();
+    let remaining = desc.slice(typeMatch[0].length);
+
+    // Extract location code from end
+    const kodeMatch = remaining.match(/\((\d{4})\)\s*$/);
+    const kode = kodeMatch ? kodeMatch[1] : null;
+    if (kodeMatch) {
+        remaining = remaining.slice(0, -kodeMatch[0].length).trim();
+    }
+
+    // Extract paket(s) after " - "
+    const paketMatch = remaining.match(/\s+-\s+(.+)$/i);
+    let pakets = [];
+    if (paketMatch) {
+        const paketStr = paketMatch[1].trim();
+        // Handle multiple pakets separated by comma or single paket
+        pakets = paketStr.split(/[,\s]+/).filter(p =>
+            /^(reguler|roam|lite|residensial|local|internasional|inter)$/i.test(p)
+        );
+        remaining = remaining.slice(0, -paketMatch[0].length).trim();
+    }
+
+    // Extract all KIT IDs
+    const kitMatches = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/gi);
+    const kits = [];
+    if (kitMatches) {
+        kitMatches.forEach((km, index) => {
+            const kitId = km.replace(/[()]/g, '').toUpperCase();
+            kits.push({
+                kit: kitId,
+                paket: pakets[index] || pakets[0] || null
+            });
+        });
+    }
+
+    // Extract client name (everything before first KIT)
+    let clientName = remaining.split(/\(?\s*KIT/i)[0].trim();
+    // Remove trailing number in parentheses like (10)
+    clientName = clientName.replace(/\s*\(\d+\)\s*$/, '').trim();
+
+    if (clientName || kits.length > 0) {
+        return {
+            success: true,
+            type: type,
+            typeClass: typeClass,
+            client: clientName,
+            kits: kits,
+            kode: kode
+        };
+    }
+
+    return { success: false };
 }
 
 // Update Pagination
@@ -699,6 +1049,7 @@ function openModal(id = null) {
 
     state.editingId = id;
     elements.transactionForm.reset();
+    resetStructuredForm();
 
     if (id) {
         if (!state.canEdit) {
@@ -728,12 +1079,121 @@ async function loadTransactionForEdit(id) {
         const data = await apiCall(`?id=${id}`);
         elements.transactionId.value = data.id;
         elements.tanggal.value = data.tanggal;
-        elements.deskripsi.value = data.deskripsi;
         elements.pemasukan.value = parseInt(data.pemasukan).toLocaleString('id-ID');
         elements.pengeluaran.value = parseInt(data.pengeluaran).toLocaleString('id-ID');
+
+        // Try to parse and fill structured form, fallback to manual mode
+        const parsed = parseDescription(data.deskripsi);
+
+        if (parsed.success) {
+            // Use auto mode with parsed data
+            document.querySelector('input[name="descMode"][value="auto"]').checked = true;
+            elements.autoModeFields.style.display = 'block';
+            elements.manualModeField.style.display = 'none';
+
+            elements.tipeTransaksi.value = parsed.type;
+            handleTransactionTypeChange();
+
+            if (parsed.type === 'Top Up') {
+                elements.topUpBank.value = parsed.bank || 'UOB';
+            } else {
+                elements.namaClient.value = parsed.nama || '';
+                elements.kodePayment.value = parsed.kode || '3402';
+
+                // Fill kit rows
+                if (parsed.kits && parsed.kits.length > 0) {
+                    elements.kitContainer.innerHTML = '';
+                    parsed.kits.forEach((kit, index) => {
+                        const kitRow = document.createElement('div');
+                        kitRow.className = 'kit-row';
+                        kitRow.innerHTML = `
+                            <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20" value="${kit.kit}">
+                            <select class="paket-select">
+                                <option value="reguler" ${kit.paket === 'reguler' ? 'selected' : ''}>Reguler</option>
+                                <option value="roam" ${kit.paket === 'roam' ? 'selected' : ''}>Roam</option>
+                                <option value="lite" ${kit.paket === 'lite' ? 'selected' : ''}>Lite</option>
+                                <option value="residensial" ${kit.paket === 'residensial' ? 'selected' : ''}>Residensial</option>
+                                <option value="local" ${kit.paket === 'local' ? 'selected' : ''}>Local</option>
+                                <option value="internasional" ${kit.paket === 'internasional' ? 'selected' : ''}>Internasional</option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:${parsed.kits.length > 1 ? 'inline-flex' : 'none'};">✕</button>
+                        `;
+                        elements.kitContainer.appendChild(kitRow);
+                    });
+                }
+            }
+
+            updateDescriptionPreview();
+        } else {
+            // Use manual mode
+            document.querySelector('input[name="descMode"][value="manual"]').checked = true;
+            elements.autoModeFields.style.display = 'none';
+            elements.manualModeField.style.display = 'block';
+            elements.deskripsi.value = data.deskripsi;
+        }
     } catch (error) {
         closeModal();
     }
+}
+
+// Parse description to structured data
+function parseDescription(desc) {
+    if (!desc) return { success: false };
+
+    // Handle Top Up
+    const topUpMatch = desc.match(/^Top\s*Up\s+(.+)$/i);
+    if (topUpMatch) {
+        return {
+            success: true,
+            type: 'Top Up',
+            bank: topUpMatch[1].trim()
+        };
+    }
+
+    // Handle Payment/Aktivasi/Refund patterns
+    // Pattern: "Payment Nama (KIT123) - paket (kode)" or "Payment Nama (extra) (KIT123) - paket (kode)"
+    const mainPattern = /^(Payment|Aktivasi|Refund)\s+(.+?)\s+\(?(KIT[A-Z0-9]+)\)?\s*-\s*(\w+)\s*\((\d+)\)$/i;
+    const match = desc.match(mainPattern);
+
+    if (match) {
+        let nama = match[2].trim();
+        // Remove extra parentheses content from nama like (10)
+        nama = nama.replace(/\s*\(\d+\)\s*$/, '').trim();
+
+        return {
+            success: true,
+            type: capitalizeFirst(match[1].toLowerCase()),
+            nama: nama,
+            kits: [{ kit: match[3].toUpperCase(), paket: match[4].toLowerCase() }],
+            kode: match[5]
+        };
+    }
+
+    // Try simpler pattern for edge cases
+    const simplePattern = /^(Payment|Aktivasi|Refund)\s+(.+)/i;
+    const simpleMatch = desc.match(simplePattern);
+    if (simpleMatch) {
+        // Try to extract kit and paket from remaining text
+        const remaining = simpleMatch[2];
+        const kitMatch = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/i);
+        const paketMatch = remaining.match(/\b(reguler|roam|lite|residensial|local|internasional|inter)\b/i);
+        const kodeMatch = remaining.match(/\((\d{4})\)/);
+
+        if (kitMatch) {
+            let nama = remaining.split(/\(?KIT/i)[0].trim();
+            nama = nama.replace(/\s*\(\d+\)\s*$/, '').trim();
+
+            return {
+                success: true,
+                type: capitalizeFirst(simpleMatch[1].toLowerCase()),
+                nama: nama,
+                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? paketMatch[1].toLowerCase() : 'reguler' }],
+                kode: kodeMatch ? kodeMatch[1] : '3402'
+            };
+        }
+    }
+
+    return { success: false };
 }
 
 async function handleFormSubmit(e) {
@@ -742,9 +1202,19 @@ async function handleFormSubmit(e) {
     // Prevent double submission
     if (state.isSubmitting) return;
 
+    // Get description based on mode
+    const isAutoMode = document.querySelector('input[name="descMode"]:checked').value === 'auto';
+    let deskripsi = '';
+
+    if (isAutoMode) {
+        deskripsi = generateDescription();
+    } else {
+        deskripsi = elements.deskripsi.value.trim();
+    }
+
     const formData = {
         tanggal: elements.tanggal.value,
-        deskripsi: elements.deskripsi.value.trim(),
+        deskripsi: deskripsi,
         pemasukan: parseRupiahInput(elements.pemasukan.value),
         pengeluaran: parseRupiahInput(elements.pengeluaran.value)
     };

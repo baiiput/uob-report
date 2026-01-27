@@ -216,10 +216,99 @@
                     <label for="tanggal">Tanggal *</label>
                     <input type="date" id="tanggal" required>
                 </div>
+
+                <!-- Mode Toggle -->
                 <div class="form-group">
-                    <label for="deskripsi">Deskripsi *</label>
-                    <textarea id="deskripsi" rows="3" required placeholder="Contoh: Langganan bulanan - Pelanggan A"></textarea>
+                    <label>Mode Input Deskripsi</label>
+                    <div class="mode-toggle">
+                        <label class="toggle-option">
+                            <input type="radio" name="descMode" value="auto" checked>
+                            <span>Otomatis</span>
+                        </label>
+                        <label class="toggle-option">
+                            <input type="radio" name="descMode" value="manual">
+                            <span>Manual</span>
+                        </label>
+                    </div>
                 </div>
+
+                <!-- Auto Mode Fields -->
+                <div id="autoModeFields">
+                    <div class="form-group">
+                        <label for="tipeTransaksi">Tipe Transaksi *</label>
+                        <select id="tipeTransaksi">
+                            <option value="Payment">Payment</option>
+                            <option value="Aktivasi">Aktivasi</option>
+                            <option value="Top Up">Top Up</option>
+                            <option value="Refund">Refund</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <!-- Top Up specific field -->
+                    <div class="form-group" id="topUpField" style="display: none;">
+                        <label for="topUpBank">Bank/Akun *</label>
+                        <select id="topUpBank">
+                            <option value="UOB">UOB</option>
+                            <option value="BCA">BCA</option>
+                            <option value="Mandiri">Mandiri</option>
+                            <option value="BRI">BRI</option>
+                            <option value="BNI">BNI</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <!-- Client fields (hidden for Top Up) -->
+                    <div id="clientFields">
+                        <div class="form-group">
+                            <label for="namaClient">Nama Client *</label>
+                            <input type="text" id="namaClient" placeholder="Contoh: Khabib Ridhoi" list="clientSuggestions">
+                            <datalist id="clientSuggestions"></datalist>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kit & Paket</label>
+                            <div id="kitContainer">
+                                <div class="kit-row">
+                                    <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
+                                    <select class="paket-select">
+                                        <option value="reguler">Reguler</option>
+                                        <option value="roam">Roam</option>
+                                        <option value="lite">Lite</option>
+                                        <option value="residensial">Residensial</option>
+                                        <option value="local">Local</option>
+                                        <option value="internasional">Internasional</option>
+                                    </select>
+                                    <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:none;">✕</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" id="addKitBtn">+ Tambah Kit</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="kodePayment">Kode Payment *</label>
+                            <select id="kodePayment">
+                                <option value="3402">3402</option>
+                                <option value="0900">0900</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="form-group">
+                        <label>Preview Deskripsi</label>
+                        <div class="description-preview" id="descriptionPreview">-</div>
+                    </div>
+                </div>
+
+                <!-- Manual Mode Field -->
+                <div id="manualModeField" style="display: none;">
+                    <div class="form-group">
+                        <label for="deskripsi">Deskripsi *</label>
+                        <textarea id="deskripsi" rows="3" placeholder="Contoh: Langganan bulanan - Pelanggan A"></textarea>
+                    </div>
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="pemasukan">Pemasukan (Rp)</label>
