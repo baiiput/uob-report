@@ -919,16 +919,17 @@ function formatDescriptionDisplay(desc) {
             html += '<div class="desc-kit-row">';
             html += `<span class="desc-kit">${escapeHtml(kit.kit)}</span>`;
             if (kit.paket) {
+                html += `<span class="desc-separator">•</span>`;
                 html += `<span class="desc-paket ${kit.paket.toLowerCase()}">${escapeHtml(capitalizeFirst(kit.paket))}</span>`;
             }
             html += '</div>';
         });
+        html += '</div>';
 
-        // Location code
+        // Location code (outside kit details, on its own line)
         if (parsed.kode) {
             html += `<div class="desc-kode">${escapeHtml(parsed.kode)}</div>`;
         }
-        html += '</div>';
     }
 
     html += '</div>';
