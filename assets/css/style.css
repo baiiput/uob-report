@@ -1442,6 +1442,11 @@ form {
         white-space: nowrap;
     }
 
+    /* Description cell - ensure enough width on mobile */
+    .description-cell {
+        min-width: 300px;
+    }
+
     /* Kit row form responsive */
     .kit-row {
         flex-wrap: wrap;
@@ -1487,6 +1492,11 @@ form {
     .data-table td.amount-balance {
         min-width: 110px;
         white-space: nowrap;
+    }
+
+    /* Description cell - ensure enough width on small mobile */
+    .description-cell {
+        min-width: 280px;
     }
 }
 
