@@ -140,12 +140,7 @@
             <!-- Filters -->
             <section class="filters-section">
                 <div class="filters-container">
-                    <div class="filter-group">
-                        <label for="searchInput">Cari</label>
-                        <input type="text" id="searchInput" placeholder="Cari deskripsi...">
-                    </div>
-                    <div class="filter-group">
-                        <label>Periode</label>
+                    <div class="quick-filters-row">
                         <div class="quick-filters" id="quickFilters">
                             <button type="button" class="qf-btn" data-filter="today">Hari Ini</button>
                             <button type="button" class="qf-btn" data-filter="yesterday">Kemarin</button>
@@ -154,23 +149,29 @@
                             <button type="button" class="qf-btn" data-filter="all">Semua</button>
                         </div>
                     </div>
-                    <div class="filter-group">
-                        <label for="startDate">Dari Tanggal</label>
-                        <input type="date" id="startDate">
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="searchInput">Cari</label>
+                            <input type="text" id="searchInput" placeholder="Cari deskripsi...">
+                        </div>
+                        <div class="filter-group">
+                            <label for="startDate">Dari Tanggal</label>
+                            <input type="date" id="startDate">
+                        </div>
+                        <div class="filter-group">
+                            <label for="endDate">Sampai Tanggal</label>
+                            <input type="date" id="endDate">
+                        </div>
+                        <div class="filter-group">
+                            <label for="typeFilter">Tipe</label>
+                            <select id="typeFilter">
+                                <option value="">Semua</option>
+                                <option value="pemasukan">Pemasukan</option>
+                                <option value="pengeluaran">Pengeluaran</option>
+                            </select>
+                        </div>
+                        <button id="resetFilters" class="btn btn-secondary">Reset</button>
                     </div>
-                    <div class="filter-group">
-                        <label for="endDate">Sampai Tanggal</label>
-                        <input type="date" id="endDate">
-                    </div>
-                    <div class="filter-group">
-                        <label for="typeFilter">Tipe</label>
-                        <select id="typeFilter">
-                            <option value="">Semua</option>
-                            <option value="pemasukan">Pemasukan</option>
-                            <option value="pengeluaran">Pengeluaran</option>
-                        </select>
-                    </div>
-                    <button id="resetFilters" class="btn btn-secondary">Reset</button>
                 </div>
             </section>
 
