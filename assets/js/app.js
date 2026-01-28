@@ -14,7 +14,8 @@ const state = {
         startDate: '',
         endDate: '',
         type: '',
-        month: ''
+        month: '',
+        paket: ''
     },
     editingId: null,
     deleteId: null,
@@ -58,6 +59,7 @@ const elements = {
     typeFilter: document.getElementById('typeFilter'),
     resetFilters: document.getElementById('resetFilters'),
     quickFilters: document.getElementById('quickFilters'),
+    paketFilters: document.getElementById('paketFilters'),
 
     // Pagination
     prevPage: document.getElementById('prevPage'),
@@ -361,18 +363,32 @@ function initEventListeners() {
         loadTransactions();
     });
 
+    // Paket filters
+    elements.paketFilters.addEventListener('click', (e) => {
+        const btn = e.target.closest('.qf-btn');
+        if (!btn) return;
+        state.filters.paket = btn.dataset.paket || '';
+        state.currentPage = 1;
+        state.showAll = false;
+        elements.paketFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadTransactions();
+    });
+
     // Reset filters
     elements.resetFilters.addEventListener('click', () => {
         elements.searchInput.value = '';
         elements.startDate.value = '';
         elements.endDate.value = '';
         elements.typeFilter.value = '';
-        state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month };
+        state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month, paket: '' };
         state.currentPage = 1;
         state.showAll = false;
-        // Reset quick filter to 'Semua'
+        // Reset quick filters
         elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
         elements.quickFilters.querySelector('[data-filter="all"]').classList.add('active');
+        elements.paketFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
+        elements.paketFilters.querySelector('[data-paket=""]').classList.add('active');
         loadTransactions();
     });
 
@@ -979,14 +995,25 @@ async function loadTransactions() {
 function renderTransactions() {
     const colspan = state.canEdit ? '7' : '6';
 
-    if (state.transactions.length === 0) {
+    let transactions = state.transactions;
+
+    // Client-side paket filter
+    if (state.filters.paket) {
+        const paketFilter = state.filters.paket.toLowerCase();
+        transactions = transactions.filter(trans => {
+            const desc = (trans.deskripsi || '').toLowerCase();
+            return desc.includes(paketFilter);
+        });
+    }
+
+    if (transactions.length === 0) {
         elements.transactionsBody.innerHTML = `<tr><td colspan="${colspan}" class="empty">Tidak ada transaksi</td></tr>`;
         return;
     }
 
     const startNo = state.showAll ? 1 : (state.currentPage - 1) * state.limit + 1;
 
-    elements.transactionsBody.innerHTML = state.transactions.map((trans, index) => `
+    elements.transactionsBody.innerHTML = transactions.map((trans, index) => `
         <tr>
             <td>${startNo + index}</td>
             <td>${formatDate(trans.tanggal)}</td>

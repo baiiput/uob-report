@@ -140,8 +140,11 @@
             <!-- Filters -->
             <section class="filters-section">
                 <div class="filters-container">
-                    <div class="quick-filters-row">
-                        <div class="quick-filters" id="quickFilters">
+                    <div class="filter-inline">
+                        <input type="text" id="searchInput" placeholder="Cari...">
+                    </div>
+                    <div class="filter-inline">
+                        <div class="qf-group" id="quickFilters">
                             <button type="button" class="qf-btn" data-filter="today">Hari Ini</button>
                             <button type="button" class="qf-btn" data-filter="yesterday">Kemarin</button>
                             <button type="button" class="qf-btn active" data-filter="this-month">Bulan Ini</button>
@@ -149,29 +152,30 @@
                             <button type="button" class="qf-btn" data-filter="all">Semua</button>
                         </div>
                     </div>
-                    <div class="filters-row">
-                        <div class="filter-group">
-                            <label for="searchInput">Cari</label>
-                            <input type="text" id="searchInput" placeholder="Cari deskripsi...">
+                    <div class="filter-inline">
+                        <div class="qf-group" id="paketFilters">
+                            <button type="button" class="qf-btn active" data-paket="">Semua</button>
+                            <button type="button" class="qf-btn" data-paket="lite">Lite</button>
+                            <button type="button" class="qf-btn" data-paket="regular">Regular</button>
+                            <button type="button" class="qf-btn" data-paket="roam">Roam</button>
+                            <button type="button" class="qf-btn" data-paket="local priority">Local P.</button>
+                            <button type="button" class="qf-btn" data-paket="international">Inter.</button>
                         </div>
-                        <div class="filter-group">
-                            <label for="startDate">Dari Tanggal</label>
-                            <input type="date" id="startDate">
-                        </div>
-                        <div class="filter-group">
-                            <label for="endDate">Sampai Tanggal</label>
-                            <input type="date" id="endDate">
-                        </div>
-                        <div class="filter-group">
-                            <label for="typeFilter">Tipe</label>
-                            <select id="typeFilter">
-                                <option value="">Semua</option>
-                                <option value="pemasukan">Pemasukan</option>
-                                <option value="pengeluaran">Pengeluaran</option>
-                            </select>
-                        </div>
-                        <button id="resetFilters" class="btn btn-secondary">Reset</button>
                     </div>
+                    <div class="filter-inline">
+                        <select id="typeFilter">
+                            <option value="">Semua Tipe</option>
+                            <option value="pemasukan">Pemasukan</option>
+                            <option value="pengeluaran">Pengeluaran</option>
+                        </select>
+                    </div>
+                    <div class="filter-inline">
+                        <input type="date" id="startDate" title="Dari tanggal">
+                    </div>
+                    <div class="filter-inline">
+                        <input type="date" id="endDate" title="Sampai tanggal">
+                    </div>
+                    <button id="resetFilters" class="btn btn-secondary btn-sm">Reset</button>
                 </div>
             </section>
 
