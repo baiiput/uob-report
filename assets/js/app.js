@@ -1054,10 +1054,9 @@ function parseDescriptionForDisplay(desc) {
     let pakets = [];
     if (paketMatch) {
         const paketStr = paketMatch[1].trim();
-        // Handle multiple pakets separated by comma or single paket
-        pakets = paketStr.split(/[,\s]+/).filter(p =>
-            /^(reguler|roam|lite|residensial|local|internasional|inter)$/i.test(p)
-        );
+        // Handle single paket or multiple pakets
+        // Just take the paket string as is (don't filter)
+        pakets = [paketStr];
         remaining = remaining.slice(0, -paketMatch[0].length).trim();
     }
 
