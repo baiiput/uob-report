@@ -57,6 +57,7 @@ const elements = {
     endDate: document.getElementById('endDate'),
     typeFilter: document.getElementById('typeFilter'),
     resetFilters: document.getElementById('resetFilters'),
+    quickFilters: document.getElementById('quickFilters'),
 
     // Pagination
     prevPage: document.getElementById('prevPage'),
@@ -292,6 +293,7 @@ function initEventListeners() {
         state.filters.startDate = e.target.value;
         state.currentPage = 1;
         state.showAll = false;
+        elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
         loadTransactions();
     });
 
@@ -299,6 +301,7 @@ function initEventListeners() {
         state.filters.endDate = e.target.value;
         state.currentPage = 1;
         state.showAll = false;
+        elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
         loadTransactions();
     });
 
@@ -306,6 +309,55 @@ function initEventListeners() {
         state.filters.type = e.target.value;
         state.currentPage = 1;
         state.showAll = false;
+        loadTransactions();
+    });
+
+    // Quick filters
+    elements.quickFilters.addEventListener('click', (e) => {
+        const btn = e.target.closest('.qf-btn');
+        if (!btn) return;
+        const filter = btn.dataset.filter;
+        const now = new Date();
+        let startDate = '';
+        let endDate = '';
+
+        if (filter === 'today') {
+            const today = formatDateStr(now);
+            startDate = today;
+            endDate = today;
+        } else if (filter === 'yesterday') {
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yd = formatDateStr(yesterday);
+            startDate = yd;
+            endDate = yd;
+        } else if (filter === 'this-month') {
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            startDate = `${year}-${month}-01`;
+            const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+            endDate = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+        } else if (filter === 'last-month') {
+            const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            const year = lastMonth.getFullYear();
+            const month = String(lastMonth.getMonth() + 1).padStart(2, '0');
+            startDate = `${year}-${month}-01`;
+            const lastDay = new Date(year, lastMonth.getMonth() + 1, 0).getDate();
+            endDate = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+        }
+        // 'all' => startDate and endDate stay empty
+
+        elements.startDate.value = startDate;
+        elements.endDate.value = endDate;
+        state.filters.startDate = startDate;
+        state.filters.endDate = endDate;
+        state.currentPage = 1;
+        state.showAll = false;
+
+        // Update active button
+        elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
         loadTransactions();
     });
 
@@ -318,6 +370,9 @@ function initEventListeners() {
         state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month };
         state.currentPage = 1;
         state.showAll = false;
+        // Reset quick filter to 'Semua'
+        elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
+        elements.quickFilters.querySelector('[data-filter="all"]').classList.add('active');
         loadTransactions();
     });
 
@@ -1726,6 +1781,13 @@ async function exportToPDF() {
 function formatRupiah(amount) {
     const num = parseFloat(amount) || 0;
     return 'Rp ' + num.toLocaleString('id-ID');
+}
+
+function formatDateStr(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 }
 
 function formatDate(dateStr) {

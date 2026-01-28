@@ -145,6 +145,16 @@
                         <input type="text" id="searchInput" placeholder="Cari deskripsi...">
                     </div>
                     <div class="filter-group">
+                        <label>Periode</label>
+                        <div class="quick-filters" id="quickFilters">
+                            <button type="button" class="qf-btn" data-filter="today">Hari Ini</button>
+                            <button type="button" class="qf-btn" data-filter="yesterday">Kemarin</button>
+                            <button type="button" class="qf-btn active" data-filter="this-month">Bulan Ini</button>
+                            <button type="button" class="qf-btn" data-filter="last-month">Bulan Lalu</button>
+                            <button type="button" class="qf-btn" data-filter="all">Semua</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
                         <label for="startDate">Dari Tanggal</label>
                         <input type="date" id="startDate">
                     </div>
