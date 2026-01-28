@@ -568,32 +568,35 @@ function capitalizeFirst(str) {
 
 // Generate description from structured form
 function generateDescription() {
-    const type = elements.tipeTransaksi.value;
+    const type = elements.tipeTransaksi ? elements.tipeTransaksi.value : 'Payment';
 
     if (type === 'Top Up') {
-        return `Top Up ${elements.topUpBank.value}`;
+        const bank = elements.topUpBank ? elements.topUpBank.value : 'UOB';
+        return `Top Up ${bank}`;
     }
 
     if (type === 'Lainnya') {
-        return elements.deskripsi.value.trim();
+        return elements.deskripsi ? elements.deskripsi.value.trim() : '';
     }
 
-    const nama = elements.namaClient.value.trim();
+    const nama = elements.namaClient ? elements.namaClient.value.trim() : '';
 
     // Get kode payment (check for custom)
-    let kode = elements.kodePayment.value;
+    let kode = elements.kodePayment ? elements.kodePayment.value : '0900';
     if (kode === 'lainnya') {
         const kodeCustom = document.getElementById('kodePaymentCustom');
         kode = kodeCustom ? kodeCustom.value.trim() : '';
     }
 
     // Get all kits
-    const kitRows = elements.kitContainer.querySelectorAll('.kit-row');
+    const kitContainer = elements.kitContainer || document.getElementById('kitContainer');
+    const kitRows = kitContainer ? kitContainer.querySelectorAll('.kit-row') : [];
     const kits = [];
     kitRows.forEach(row => {
-        const kitInput = row.querySelector('.kit-input').value.trim().toUpperCase();
+        const kitInputEl = row.querySelector('.kit-input');
+        const kitInput = kitInputEl ? kitInputEl.value.trim().toUpperCase() : '';
         const paketSelect = row.querySelector('.paket-select');
-        let paket = paketSelect.value;
+        let paket = paketSelect ? paketSelect.value : 'regular';
 
         // Check for custom paket
         if (paket === 'lainnya') {
@@ -611,9 +614,11 @@ function generateDescription() {
     kits.forEach(k => {
         desc += ` (${k.kit}) - ${k.paket}`;
     });
-    desc += ` (${kode})`;
+    if (kode) {
+        desc += ` (${kode})`;
+    }
 
-    return desc;
+    return desc.trim();
 }
 
 // Reset structured form
@@ -1266,14 +1271,18 @@ async function handleFormSubmit(e) {
     if (state.isSubmitting) return;
 
     // Get description based on mode
-    const isAutoMode = document.querySelector('input[name="descMode"]:checked').value === 'auto';
+    const modeRadio = document.querySelector('input[name="descMode"]:checked');
+    const isAutoMode = modeRadio ? modeRadio.value === 'auto' : true;
     let deskripsi = '';
 
     if (isAutoMode) {
         deskripsi = generateDescription();
     } else {
-        deskripsi = elements.deskripsi.value.trim();
+        deskripsi = elements.deskripsi ? elements.deskripsi.value.trim() : '';
     }
+
+    // Trim deskripsi
+    deskripsi = deskripsi.trim();
 
     const formData = {
         tanggal: elements.tanggal.value,
@@ -1282,8 +1291,14 @@ async function handleFormSubmit(e) {
         pengeluaran: parseRupiahInput(elements.pengeluaran.value)
     };
 
-    if (!formData.tanggal || !formData.deskripsi) {
-        showToast('Tanggal dan deskripsi harus diisi', 'error');
+    // Validation
+    if (!formData.tanggal) {
+        showToast('Tanggal harus diisi', 'error');
+        return;
+    }
+
+    if (!formData.deskripsi) {
+        showToast('Deskripsi harus diisi', 'error');
         return;
     }
 

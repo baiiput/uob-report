@@ -1436,10 +1436,10 @@ form {
         font-size: 0.875rem;
     }
 
-    /* Description cell responsive - no max-width, allow table scroll */
-    .description-cell {
-        max-width: none;
-        min-width: 350px;
+    /* Saldo column - ensure minimum width on mobile */
+    .data-table td.amount-balance {
+        min-width: 120px;
+        white-space: nowrap;
     }
 
     /* Kit row form responsive */
@@ -1483,10 +1483,10 @@ form {
         display: none;
     }
 
-    /* Description cell extra small - keep same as tablet */
-    .description-cell {
-        max-width: none;
-        min-width: 320px;
+    /* Saldo column - ensure minimum width on small mobile */
+    .data-table td.amount-balance {
+        min-width: 110px;
+        white-space: nowrap;
     }
 }
 
