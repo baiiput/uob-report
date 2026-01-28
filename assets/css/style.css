@@ -1425,71 +1425,10 @@ form {
         font-size: 0.875rem;
     }
 
-    /* Description cell responsive */
+    /* Description cell responsive - no max-width, allow table scroll */
     .description-cell {
-        max-width: 220px;
-    }
-
-    .desc-structured {
-        gap: 0.2rem;
-    }
-
-    .desc-header {
-        gap: 0.35rem;
-    }
-
-    .desc-type {
-        font-size: 0.65rem;
-        padding: 0.15rem 0.4rem;
-    }
-
-    .desc-type::before {
-        font-size: 0.65rem;
-    }
-
-    .desc-client {
-        font-size: 0.75rem;
-    }
-
-    .desc-details {
-        padding-left: 0.35rem;
-        gap: 0.15rem;
-    }
-
-    .desc-kit-row {
-        gap: 0.35rem;
-        font-size: 0.7rem;
-    }
-
-    .desc-kit-row::before {
-        font-size: 0.65rem;
-    }
-
-    .desc-kit {
-        font-size: 0.65rem;
-        padding: 0.12rem 0.35rem;
-    }
-
-    .desc-separator {
-        font-size: 0.6rem;
-    }
-
-    .desc-paket {
-        font-size: 0.6rem;
-        padding: 0.1rem 0.3rem;
-    }
-
-    .desc-paket::before {
-        font-size: 0.55rem;
-    }
-
-    .desc-kode {
-        font-size: 0.65rem;
-        padding-left: 0.35rem;
-    }
-
-    .desc-kode::before {
-        font-size: 0.6rem;
+        max-width: none;
+        min-width: 280px;
     }
 
     /* Kit row form responsive */
@@ -1533,71 +1472,10 @@ form {
         display: none;
     }
 
-    /* Description cell extra small */
+    /* Description cell extra small - keep same as tablet */
     .description-cell {
-        max-width: 160px;
-    }
-
-    .desc-structured {
-        gap: 0.15rem;
-    }
-
-    .desc-header {
-        gap: 0.25rem;
-    }
-
-    .desc-type {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.25rem;
-    }
-
-    .desc-type::before {
-        font-size: 0.55rem;
-    }
-
-    .desc-client {
-        font-size: 0.7rem;
-    }
-
-    .desc-details {
-        padding-left: 0.25rem;
-        gap: 0.1rem;
-    }
-
-    .desc-kit-row {
-        gap: 0.25rem;
-        font-size: 0.6rem;
-    }
-
-    .desc-kit-row::before {
-        font-size: 0.55rem;
-    }
-
-    .desc-kit {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.25rem;
-    }
-
-    .desc-separator {
-        font-size: 0.5rem;
-    }
-
-    .desc-paket {
-        font-size: 0.5rem;
-        padding: 0.08rem 0.2rem;
-    }
-
-    .desc-paket::before {
-        font-size: 0.45rem;
-    }
-
-    .desc-kode {
-        font-size: 0.55rem;
-        padding-left: 0.25rem;
-    }
-
-    .desc-kode::before {
-        font-size: 0.5rem;
+        max-width: none;
+        min-width: 250px;
     }
 }
 
