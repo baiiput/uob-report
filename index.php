@@ -272,13 +272,14 @@
                                 <div class="kit-row">
                                     <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
                                     <select class="paket-select">
-                                        <option value="reguler">Reguler</option>
-                                        <option value="roam">Roam</option>
                                         <option value="lite">Lite</option>
-                                        <option value="residensial">Residensial</option>
-                                        <option value="local">Local</option>
-                                        <option value="internasional">Internasional</option>
+                                        <option value="regular">Regular</option>
+                                        <option value="roam">Roam</option>
+                                        <option value="local priority">Local Priority</option>
+                                        <option value="international">International</option>
+                                        <option value="lainnya">Lainnya</option>
                                     </select>
+                                    <input type="text" class="paket-custom" placeholder="Nama paket..." style="display:none;">
                                     <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:none;">✕</button>
                                 </div>
                             </div>
@@ -288,9 +289,13 @@
                         <div class="form-group">
                             <label for="kodePayment">Kode Payment *</label>
                             <select id="kodePayment">
-                                <option value="3402">3402</option>
                                 <option value="0900">0900</option>
+                                <option value="2811">2811</option>
+                                <option value="3402">3402</option>
+                                <option value="7778">7778</option>
+                                <option value="lainnya">Lainnya</option>
                             </select>
+                            <input type="text" id="kodePaymentCustom" placeholder="Kode payment..." style="display:none; margin-top: 0.5rem;">
                         </div>
                     </div>
 

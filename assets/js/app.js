@@ -417,7 +417,7 @@ function initStructuredFormEvents() {
     // Add kit button
     elements.addKitBtn.addEventListener('click', addKitRow);
 
-    // Remove kit button (delegated)
+    // Remove kit button and paket select change (delegated)
     elements.kitContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-remove-kit')) {
             e.target.closest('.kit-row').remove();
@@ -426,15 +426,40 @@ function initStructuredFormEvents() {
         }
     });
 
+    // Handle paket select change for "Lainnya" option (delegated)
+    elements.kitContainer.addEventListener('change', (e) => {
+        if (e.target.classList.contains('paket-select')) {
+            const customInput = e.target.closest('.kit-row').querySelector('.paket-custom');
+            if (customInput) {
+                customInput.style.display = e.target.value === 'lainnya' ? 'block' : 'none';
+            }
+        }
+        updateDescriptionPreview();
+    });
+
     // Update preview on input changes
     elements.namaClient.addEventListener('input', updateDescriptionPreview);
-    elements.kodePayment.addEventListener('change', updateDescriptionPreview);
+    elements.kodePayment.addEventListener('change', handleKodePaymentChange);
     elements.tipeTransaksi.addEventListener('change', updateDescriptionPreview);
     elements.topUpBank.addEventListener('change', updateDescriptionPreview);
 
+    // Kode payment custom input
+    const kodeCustom = document.getElementById('kodePaymentCustom');
+    if (kodeCustom) {
+        kodeCustom.addEventListener('input', updateDescriptionPreview);
+    }
+
     // Kit/Paket input changes (delegated)
     elements.kitContainer.addEventListener('input', updateDescriptionPreview);
-    elements.kitContainer.addEventListener('change', updateDescriptionPreview);
+}
+
+// Handle kode payment change for "Lainnya" option
+function handleKodePaymentChange() {
+    const kodeCustom = document.getElementById('kodePaymentCustom');
+    if (kodeCustom) {
+        kodeCustom.style.display = elements.kodePayment.value === 'lainnya' ? 'block' : 'none';
+    }
+    updateDescriptionPreview();
 }
 
 // Handle transaction type change
@@ -455,13 +480,14 @@ function addKitRow() {
     kitRow.innerHTML = `
         <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
         <select class="paket-select">
-            <option value="reguler">Reguler</option>
-            <option value="roam">Roam</option>
             <option value="lite">Lite</option>
-            <option value="residensial">Residensial</option>
-            <option value="local">Local</option>
-            <option value="internasional">Internasional</option>
+            <option value="regular">Regular</option>
+            <option value="roam">Roam</option>
+            <option value="local priority">Local Priority</option>
+            <option value="international">International</option>
+            <option value="lainnya">Lainnya</option>
         </select>
+        <input type="text" class="paket-custom" placeholder="Nama paket..." style="display:none;">
         <button type="button" class="btn btn-sm btn-secondary btn-remove-kit">✕</button>
     `;
     elements.kitContainer.appendChild(kitRow);
@@ -490,14 +516,28 @@ function updateDescriptionPreview() {
         preview = '(Gunakan mode manual untuk deskripsi custom)';
     } else {
         const nama = elements.namaClient.value.trim();
-        const kode = elements.kodePayment.value;
+
+        // Get kode payment (check for custom)
+        let kode = elements.kodePayment.value;
+        if (kode === 'lainnya') {
+            const kodeCustom = document.getElementById('kodePaymentCustom');
+            kode = kodeCustom ? kodeCustom.value.trim() : '';
+        }
 
         // Get all kits
         const kitRows = elements.kitContainer.querySelectorAll('.kit-row');
         const kits = [];
         kitRows.forEach(row => {
             const kitInput = row.querySelector('.kit-input').value.trim().toUpperCase();
-            const paket = row.querySelector('.paket-select').value;
+            const paketSelect = row.querySelector('.paket-select');
+            let paket = paketSelect.value;
+
+            // Check for custom paket
+            if (paket === 'lainnya') {
+                const paketCustom = row.querySelector('.paket-custom');
+                paket = paketCustom ? paketCustom.value.trim() : '';
+            }
+
             if (kitInput) {
                 kits.push({ kit: kitInput, paket });
             }
@@ -539,14 +579,28 @@ function generateDescription() {
     }
 
     const nama = elements.namaClient.value.trim();
-    const kode = elements.kodePayment.value;
+
+    // Get kode payment (check for custom)
+    let kode = elements.kodePayment.value;
+    if (kode === 'lainnya') {
+        const kodeCustom = document.getElementById('kodePaymentCustom');
+        kode = kodeCustom ? kodeCustom.value.trim() : '';
+    }
 
     // Get all kits
     const kitRows = elements.kitContainer.querySelectorAll('.kit-row');
     const kits = [];
     kitRows.forEach(row => {
         const kitInput = row.querySelector('.kit-input').value.trim().toUpperCase();
-        const paket = row.querySelector('.paket-select').value;
+        const paketSelect = row.querySelector('.paket-select');
+        let paket = paketSelect.value;
+
+        // Check for custom paket
+        if (paket === 'lainnya') {
+            const paketCustom = row.querySelector('.paket-custom');
+            paket = paketCustom ? paketCustom.value.trim() : '';
+        }
+
         if (kitInput) {
             kits.push({ kit: kitInput, paket });
         }
@@ -573,20 +627,28 @@ function resetStructuredForm() {
     elements.tipeTransaksi.value = 'Payment';
     elements.topUpBank.value = 'UOB';
     elements.namaClient.value = '';
-    elements.kodePayment.value = '3402';
+    elements.kodePayment.value = '0900';
+
+    // Hide custom kode payment input
+    const kodeCustom = document.getElementById('kodePaymentCustom');
+    if (kodeCustom) {
+        kodeCustom.style.display = 'none';
+        kodeCustom.value = '';
+    }
 
     // Reset kit container to single row
     elements.kitContainer.innerHTML = `
         <div class="kit-row">
             <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20">
             <select class="paket-select">
-                <option value="reguler">Reguler</option>
-                <option value="roam">Roam</option>
                 <option value="lite">Lite</option>
-                <option value="residensial">Residensial</option>
-                <option value="local">Local</option>
-                <option value="internasional">Internasional</option>
+                <option value="regular">Regular</option>
+                <option value="roam">Roam</option>
+                <option value="local priority">Local Priority</option>
+                <option value="international">International</option>
+                <option value="lainnya">Lainnya</option>
             </select>
+            <input type="text" class="paket-custom" placeholder="Nama paket..." style="display:none;">
             <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:none;">✕</button>
         </div>
     `;

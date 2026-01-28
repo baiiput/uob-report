@@ -1020,6 +1020,12 @@ button, a, input, select, textarea {
     font-size: 0.7rem;
 }
 
+.desc-paket.lite {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.desc-paket.regular,
 .desc-paket.reguler {
     background-color: #dbeafe;
     color: #1d4ed8;
@@ -1030,9 +1036,17 @@ button, a, input, select, textarea {
     color: #047857;
 }
 
-.desc-paket.lite {
-    background-color: #fef3c7;
-    color: #b45309;
+.desc-paket.local-priority,
+.desc-paket.local {
+    background-color: #f3e8ff;
+    color: #7c3aed;
+}
+
+.desc-paket.international,
+.desc-paket.internasional,
+.desc-paket.inter {
+    background-color: #fce7f3;
+    color: #be185d;
 }
 
 .desc-paket.residensial {
@@ -1040,17 +1054,12 @@ button, a, input, select, textarea {
     color: #4338ca;
 }
 
-.desc-paket.local {
-    background-color: #f3e8ff;
-    color: #7c3aed;
+[data-theme="dark"] .desc-paket.lite {
+    background-color: #78350f;
+    color: #fcd34d;
 }
 
-.desc-paket.internasional,
-.desc-paket.inter {
-    background-color: #fce7f3;
-    color: #be185d;
-}
-
+[data-theme="dark"] .desc-paket.regular,
 [data-theme="dark"] .desc-paket.reguler {
     background-color: #1e3a5f;
     color: #93c5fd;
@@ -1061,25 +1070,22 @@ button, a, input, select, textarea {
     color: #6ee7b7;
 }
 
-[data-theme="dark"] .desc-paket.lite {
-    background-color: #78350f;
-    color: #fcd34d;
-}
-
-[data-theme="dark"] .desc-paket.residensial {
-    background-color: #312e81;
-    color: #a5b4fc;
-}
-
+[data-theme="dark"] .desc-paket.local-priority,
 [data-theme="dark"] .desc-paket.local {
     background-color: #4c1d95;
     color: #c4b5fd;
 }
 
+[data-theme="dark"] .desc-paket.international,
 [data-theme="dark"] .desc-paket.internasional,
 [data-theme="dark"] .desc-paket.inter {
     background-color: #831843;
     color: #f9a8d4;
+}
+
+[data-theme="dark"] .desc-paket.residensial {
+    background-color: #312e81;
+    color: #a5b4fc;
 }
 
 .desc-kode {
@@ -1139,6 +1145,11 @@ button, a, input, select, textarea {
 
 .paket-select {
     min-width: 120px;
+}
+
+.paket-custom {
+    min-width: 100px;
+    flex: 1;
 }
 
 .btn-remove-kit {
@@ -1428,7 +1439,7 @@ form {
     /* Description cell responsive - no max-width, allow table scroll */
     .description-cell {
         max-width: none;
-        min-width: 280px;
+        min-width: 350px;
     }
 
     /* Kit row form responsive */
@@ -1475,7 +1486,7 @@ form {
     /* Description cell extra small - keep same as tablet */
     .description-cell {
         max-width: none;
-        min-width: 250px;
+        min-width: 320px;
     }
 }
 
