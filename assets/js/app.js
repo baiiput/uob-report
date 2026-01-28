@@ -1076,8 +1076,6 @@ function parseDescriptionForDisplay(desc) {
 
     // Extract client name (everything before first KIT)
     let clientName = remaining.split(/\(?\s*KIT/i)[0].trim();
-    // Remove trailing number in parentheses like (10)
-    clientName = clientName.replace(/\s*\(\d+\)\s*$/, '').trim();
 
     if (clientName || kits.length > 0) {
         return {
@@ -1225,8 +1223,6 @@ function parseDescription(desc) {
 
     if (match) {
         let nama = match[2].trim();
-        // Remove extra parentheses content from nama like (10)
-        nama = nama.replace(/\s*\(\d+\)\s*$/, '').trim();
 
         return {
             success: true,
@@ -1244,19 +1240,18 @@ function parseDescription(desc) {
         // Try to extract kit and paket from remaining text
         const remaining = simpleMatch[2];
         const kitMatch = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/i);
-        const paketMatch = remaining.match(/\b(reguler|roam|lite|residensial|local|internasional|inter)\b/i);
+        const paketMatch = remaining.match(/\b(regular|reguler|roam|lite|residensial|local priority|local|international|internasional|inter)\b/i);
         const kodeMatch = remaining.match(/\((\d{4})\)/);
 
         if (kitMatch) {
             let nama = remaining.split(/\(?KIT/i)[0].trim();
-            nama = nama.replace(/\s*\(\d+\)\s*$/, '').trim();
 
             return {
                 success: true,
                 type: capitalizeFirst(simpleMatch[1].toLowerCase()),
                 nama: nama,
-                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? paketMatch[1].toLowerCase() : 'reguler' }],
-                kode: kodeMatch ? kodeMatch[1] : '3402'
+                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? paketMatch[1].toLowerCase() : 'regular' }],
+                kode: kodeMatch ? kodeMatch[1] : '0900'
             };
         }
     }
