@@ -15,7 +15,7 @@ const state = {
         endDate: '',
         type: '',
         month: '',
-        paket: ''
+        paket: []
     },
     editingId: null,
     deleteId: null,
@@ -59,7 +59,11 @@ const elements = {
     typeFilter: document.getElementById('typeFilter'),
     resetFilters: document.getElementById('resetFilters'),
     quickFilters: document.getElementById('quickFilters'),
-    paketFilters: document.getElementById('paketFilters'),
+    paketDropdown: document.getElementById('paketDropdown'),
+    paketDropdownBtn: document.getElementById('paketDropdownBtn'),
+    paketDropdownLabel: document.getElementById('paketDropdownLabel'),
+    paketDropdownMenu: document.getElementById('paketDropdownMenu'),
+    paketClearBtn: document.getElementById('paketClearBtn'),
 
     // Pagination
     prevPage: document.getElementById('prevPage'),
@@ -363,16 +367,35 @@ function initEventListeners() {
         loadTransactions();
     });
 
-    // Paket filters
-    elements.paketFilters.addEventListener('click', (e) => {
-        const btn = e.target.closest('.qf-btn');
-        if (!btn) return;
-        state.filters.paket = btn.dataset.paket || '';
-        state.currentPage = 1;
-        state.showAll = false;
-        elements.paketFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        loadTransactions();
+    // Paket dropdown toggle
+    elements.paketDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const menu = elements.paketDropdownMenu;
+        const btn = elements.paketDropdownBtn;
+        const isOpen = menu.classList.contains('show');
+        menu.classList.toggle('show');
+        btn.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!elements.paketDropdown.contains(e.target)) {
+            elements.paketDropdownMenu.classList.remove('show');
+            elements.paketDropdownBtn.classList.remove('open');
+        }
+    });
+
+    // Paket checkbox change
+    elements.paketDropdownMenu.addEventListener('change', (e) => {
+        if (e.target.type === 'checkbox') {
+            updatePaketFilter();
+        }
+    });
+
+    // Paket clear button
+    elements.paketClearBtn.addEventListener('click', () => {
+        elements.paketDropdownMenu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        updatePaketFilter();
     });
 
     // Reset filters
@@ -381,14 +404,14 @@ function initEventListeners() {
         elements.startDate.value = '';
         elements.endDate.value = '';
         elements.typeFilter.value = '';
-        state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month, paket: '' };
+        elements.paketDropdownMenu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        updatePaketLabel([]);
+        state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month, paket: [] };
         state.currentPage = 1;
         state.showAll = false;
         // Reset quick filters
         elements.quickFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
         elements.quickFilters.querySelector('[data-filter="all"]').classList.add('active');
-        elements.paketFilters.querySelectorAll('.qf-btn').forEach(b => b.classList.remove('active'));
-        elements.paketFilters.querySelector('[data-paket=""]').classList.add('active');
         loadTransactions();
     });
 
@@ -997,12 +1020,12 @@ function renderTransactions() {
 
     let transactions = state.transactions;
 
-    // Client-side paket filter
-    if (state.filters.paket) {
-        const paketFilter = state.filters.paket.toLowerCase();
+    // Client-side paket filter (multi-select)
+    if (state.filters.paket && state.filters.paket.length > 0) {
+        const paketFilters = state.filters.paket.map(p => p.toLowerCase());
         transactions = transactions.filter(trans => {
             const desc = (trans.deskripsi || '').toLowerCase();
-            return desc.includes(paketFilter);
+            return paketFilters.some(p => desc.includes(p));
         });
     }
 
@@ -1808,6 +1831,27 @@ async function exportToPDF() {
 function formatRupiah(amount) {
     const num = parseFloat(amount) || 0;
     return 'Rp ' + num.toLocaleString('id-ID');
+}
+
+function updatePaketFilter() {
+    const checked = [...elements.paketDropdownMenu.querySelectorAll('input[type="checkbox"]:checked')].map(cb => cb.value);
+    state.filters.paket = checked;
+    state.currentPage = 1;
+    state.showAll = false;
+    updatePaketLabel(checked);
+    loadTransactions();
+}
+
+function updatePaketLabel(selected) {
+    const btn = elements.paketDropdownBtn;
+    const label = elements.paketDropdownLabel;
+    if (selected.length === 0) {
+        label.textContent = 'Paket';
+        btn.classList.remove('has-selection');
+    } else {
+        label.textContent = `Paket (${selected.length})`;
+        btn.classList.add('has-selection');
+    }
 }
 
 function formatDateStr(date) {

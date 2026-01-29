@@ -126,13 +126,31 @@
                         </div>
                     </div>
                     <div class="filter-inline">
-                        <div class="qf-group" id="paketFilters">
-                            <button type="button" class="qf-btn active" data-paket="">Semua</button>
-                            <button type="button" class="qf-btn" data-paket="lite">Lite</button>
-                            <button type="button" class="qf-btn" data-paket="regular">Regular</button>
-                            <button type="button" class="qf-btn" data-paket="roam">Roam</button>
-                            <button type="button" class="qf-btn" data-paket="local priority">Local P.</button>
-                            <button type="button" class="qf-btn" data-paket="international">Inter.</button>
+                        <div class="paket-dropdown" id="paketDropdown">
+                            <button type="button" class="paket-dropdown-btn" id="paketDropdownBtn">
+                                <span id="paketDropdownLabel">Paket</span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>
+                            </button>
+                            <div class="paket-dropdown-menu" id="paketDropdownMenu">
+                                <label class="paket-option">
+                                    <input type="checkbox" value="lite"> <span class="paket-dot lite"></span> Lite
+                                </label>
+                                <label class="paket-option">
+                                    <input type="checkbox" value="regular"> <span class="paket-dot regular"></span> Regular
+                                </label>
+                                <label class="paket-option">
+                                    <input type="checkbox" value="roam"> <span class="paket-dot roam"></span> Roam
+                                </label>
+                                <label class="paket-option">
+                                    <input type="checkbox" value="local priority"> <span class="paket-dot local-priority"></span> Local Priority
+                                </label>
+                                <label class="paket-option">
+                                    <input type="checkbox" value="international"> <span class="paket-dot international"></span> International
+                                </label>
+                                <div class="paket-menu-footer">
+                                    <button type="button" class="paket-clear-btn" id="paketClearBtn">Reset</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="filter-inline">
