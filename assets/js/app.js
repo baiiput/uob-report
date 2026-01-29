@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDefaultDateFilter();
     initEventListeners();
     checkAuthStatus();
+    migratePaketNames();
     loadSummary();
     loadTransactions();
     startAutoRefresh();
@@ -703,6 +704,28 @@ function capitalizeFirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+async function migratePaketNames() {
+    if (localStorage.getItem('paketMigrated')) return;
+    try {
+        await apiCall('?migrate_paket=1');
+        localStorage.setItem('paketMigrated', '1');
+    } catch (e) {
+        // silent fail
+    }
+}
+
+function normalizePaket(paket) {
+    const map = {
+        'reguler': 'regular',
+        'residensial': 'regular',
+        'internasional': 'international',
+        'inter': 'international',
+        'local': 'local priority'
+    };
+    const lower = paket.toLowerCase();
+    return map[lower] || lower;
+}
+
 // Generate description from structured form
 function generateDescription() {
     const type = elements.tipeTransaksi ? elements.tipeTransaksi.value : 'Payment';
@@ -1194,9 +1217,8 @@ function parseDescriptionForDisplay(desc) {
     let pakets = [];
     if (paketMatch) {
         const paketStr = paketMatch[1].trim();
-        // Handle single paket or multiple pakets
-        // Just take the paket string as is (don't filter)
-        pakets = [paketStr];
+        // Normalize paket name
+        pakets = [normalizePaket(paketStr)];
         remaining = remaining.slice(0, -paketMatch[0].length).trim();
     }
 
@@ -1314,12 +1336,12 @@ async function loadTransactionForEdit(id) {
                         kitRow.innerHTML = `
                             <input type="text" class="kit-input" placeholder="KIT303946946" maxlength="20" value="${kit.kit}">
                             <select class="paket-select">
-                                <option value="reguler" ${kit.paket === 'reguler' ? 'selected' : ''}>Reguler</option>
-                                <option value="roam" ${kit.paket === 'roam' ? 'selected' : ''}>Roam</option>
                                 <option value="lite" ${kit.paket === 'lite' ? 'selected' : ''}>Lite</option>
-                                <option value="residensial" ${kit.paket === 'residensial' ? 'selected' : ''}>Residensial</option>
-                                <option value="local" ${kit.paket === 'local' ? 'selected' : ''}>Local</option>
-                                <option value="internasional" ${kit.paket === 'internasional' ? 'selected' : ''}>Internasional</option>
+                                <option value="regular" ${(kit.paket === 'regular' || kit.paket === 'reguler') ? 'selected' : ''}>Regular</option>
+                                <option value="roam" ${kit.paket === 'roam' ? 'selected' : ''}>Roam</option>
+                                <option value="local priority" ${(kit.paket === 'local priority' || kit.paket === 'local') ? 'selected' : ''}>Local Priority</option>
+                                <option value="international" ${(kit.paket === 'international' || kit.paket === 'internasional' || kit.paket === 'inter') ? 'selected' : ''}>International</option>
+                                <option value="lainnya" ${!['lite','regular','reguler','roam','local priority','local','international','internasional','inter','residensial'].includes(kit.paket) && kit.paket ? 'selected' : ''}>Lainnya</option>
                             </select>
                             <button type="button" class="btn btn-sm btn-secondary btn-remove-kit" style="display:${parsed.kits.length > 1 ? 'inline-flex' : 'none'};">✕</button>
                         `;
@@ -1389,7 +1411,7 @@ function parseDescription(desc) {
                 success: true,
                 type: capitalizeFirst(simpleMatch[1].toLowerCase()),
                 nama: nama,
-                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? paketMatch[1].toLowerCase() : 'regular' }],
+                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? normalizePaket(paketMatch[1]) : 'regular' }],
                 kode: kodeMatch ? kodeMatch[1] : '0900'
             };
         }

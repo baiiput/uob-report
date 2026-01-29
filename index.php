@@ -113,7 +113,7 @@
             <!-- Filters -->
             <section class="filters-section">
                 <div class="filters-container">
-                    <div class="filter-inline">
+                    <div class="filter-inline filter-grow">
                         <input type="text" id="searchInput" placeholder="Cari...">
                     </div>
                     <div class="filter-inline">
@@ -171,10 +171,10 @@
                             <option value="pengeluaran">Pengeluaran</option>
                         </select>
                     </div>
-                    <div class="filter-inline">
+                    <div class="filter-inline filter-grow">
                         <input type="date" id="startDate" title="Dari tanggal">
                     </div>
-                    <div class="filter-inline">
+                    <div class="filter-inline filter-grow">
                         <input type="date" id="endDate" title="Sampai tanggal">
                     </div>
                     <button id="resetFilters" class="btn btn-secondary btn-sm">Reset</button>

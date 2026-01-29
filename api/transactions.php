@@ -36,6 +36,26 @@ try {
 }
 
 function handleGet(PDO $pdo): void {
+    // Migrate old paket names in descriptions
+    if (isset($_GET['migrate_paket'])) {
+        $updates = [
+            ['old' => '- reguler', 'new' => '- regular'],
+            ['old' => '- Reguler', 'new' => '- Regular'],
+            ['old' => '- internasional', 'new' => '- international'],
+            ['old' => '- Internasional', 'new' => '- International'],
+            ['old' => '- residensial', 'new' => '- regular'],
+            ['old' => '- Residensial', 'new' => '- Regular'],
+        ];
+        $totalUpdated = 0;
+        foreach ($updates as $u) {
+            $stmt = $pdo->prepare("UPDATE transactions SET deskripsi = REPLACE(deskripsi, ?, ?) WHERE deskripsi LIKE ?");
+            $stmt->execute([$u['old'], $u['new'], '%' . $u['old'] . '%']);
+            $totalUpdated += $stmt->rowCount();
+        }
+        echo json_encode(['success' => true, 'updated' => $totalUpdated]);
+        return;
+    }
+
     // Get summary statistics
     if (isset($_GET['summary'])) {
         // Get current month range
