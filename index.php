@@ -55,83 +55,56 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Summary Cards -->
-            <section class="summary-section">
-                <h2 class="section-title">
-                    <span class="title-text">Dashboard Bulan Ini</span>
-                    <span class="title-badge" id="currentMonthBadge"></span>
-                </h2>
-                <div class="summary-cards">
-                    <div class="card summary-card income">
-                        <div class="card-icon">💰</div>
-                        <div class="card-content">
-                            <span class="card-label">Pemasukan Bulan Ini</span>
-                            <span class="card-value" id="totalPemasukan">Rp 0</span>
+            <!-- Dashboard -->
+            <section class="dashboard-section">
+                <div class="dashboard-card">
+                    <div class="dash-header">
+                        <span class="dash-title">Dashboard</span>
+                        <span class="dash-badge" id="currentMonthBadge"></span>
+                    </div>
+                    <div class="dash-row">
+                        <div class="dash-item income">
+                            <span class="dash-label">💰 Pemasukan</span>
+                            <span class="dash-value" id="totalPemasukan">Rp 0</span>
+                        </div>
+                        <div class="dash-item expense">
+                            <span class="dash-label">💸 Pengeluaran</span>
+                            <span class="dash-value" id="totalPengeluaran">Rp 0</span>
+                        </div>
+                        <div class="dash-item balance">
+                            <span class="dash-label">🏦 Saldo</span>
+                            <span class="dash-value" id="totalSaldo">Rp 0</span>
+                        </div>
+                        <div class="dash-item total">
+                            <span class="dash-label">📊 Transaksi</span>
+                            <span class="dash-value" id="totalTransaksi">0</span>
+                            <span class="dash-sub"><span id="totalTransIn">0</span> masuk · <span id="totalTransOut">0</span> keluar</span>
                         </div>
                     </div>
-                    <div class="card summary-card expense">
-                        <div class="card-icon">💸</div>
-                        <div class="card-content">
-                            <span class="card-label">Pengeluaran Bulan Ini</span>
-                            <span class="card-value" id="totalPengeluaran">Rp 0</span>
+                    <div class="dash-divider"></div>
+                    <div class="dash-monthly-header">
+                        <span class="dash-monthly-label">📅 Ringkasan Bulan</span>
+                        <select id="monthFilter">
+                            <option value="">Pilih Bulan</option>
+                        </select>
+                    </div>
+                    <div class="dash-row dash-monthly" id="monthlyCards" style="display: none;">
+                        <div class="dash-item income">
+                            <span class="dash-label">💰 Pemasukan</span>
+                            <span class="dash-value" id="monthlyIncome">Rp 0</span>
                         </div>
-                    </div>
-                    <div class="card summary-card balance">
-                        <div class="card-icon">🏦</div>
-                        <div class="card-content">
-                            <span class="card-label">Saldo Bulan Ini</span>
-                            <span class="card-value" id="totalSaldo">Rp 0</span>
+                        <div class="dash-item expense">
+                            <span class="dash-label">💸 Pengeluaran</span>
+                            <span class="dash-value" id="monthlyExpense">Rp 0</span>
                         </div>
-                    </div>
-                    <div class="card summary-card total">
-                        <div class="card-icon">📊</div>
-                        <div class="card-content">
-                            <span class="card-label">Total Transaksi Bulan Ini</span>
-                            <span class="card-value" id="totalTransaksi">0</span>
-                            <div class="card-detail">
-                                <span class="detail-item">
-                                    <span class="detail-label">Masuk:</span>
-                                    <span class="detail-value" id="totalTransIn">0</span>
-                                </span>
-                                <span class="detail-separator">|</span>
-                                <span class="detail-item">
-                                    <span class="detail-label">Keluar:</span>
-                                    <span class="detail-value" id="totalTransOut">0</span>
-                                </span>
-                            </div>
+                        <div class="dash-item balance">
+                            <span class="dash-label">🏦 Saldo</span>
+                            <span class="dash-value" id="monthlyBalance">Rp 0</span>
                         </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Monthly Summary -->
-            <section class="monthly-section">
-                <div class="monthly-header">
-                    <h2>Ringkasan Bulanan</h2>
-                    <select id="monthFilter">
-                        <option value="">Pilih Bulan</option>
-                    </select>
-                </div>
-                <div class="monthly-cards" id="monthlyCards" style="display: none;">
-                    <div class="card monthly-card">
-                        <span class="monthly-label">Pemasukan Bulan Ini</span>
-                        <span class="monthly-value income" id="monthlyIncome">Rp 0</span>
-                    </div>
-                    <div class="card monthly-card">
-                        <span class="monthly-label">Pengeluaran Bulan Ini</span>
-                        <span class="monthly-value expense" id="monthlyExpense">Rp 0</span>
-                    </div>
-                    <div class="card monthly-card">
-                        <span class="monthly-label">Saldo Bulan Ini</span>
-                        <span class="monthly-value balance" id="monthlyBalance">Rp 0</span>
-                    </div>
-                    <div class="card monthly-card">
-                        <span class="monthly-label">Total Transaksi Bulan Ini</span>
-                        <span class="monthly-value total" id="monthlyTransTotal">0</span>
-                        <div class="monthly-detail">
-                            <span class="detail-text">Masuk: <strong id="monthlyTransIn">0</strong></span>
-                            <span class="detail-separator">|</span>
-                            <span class="detail-text">Keluar: <strong id="monthlyTransOut">0</strong></span>
+                        <div class="dash-item total">
+                            <span class="dash-label">📊 Transaksi</span>
+                            <span class="dash-value" id="monthlyTransTotal">0</span>
+                            <span class="dash-sub"><span id="monthlyTransIn">0</span> masuk · <span id="monthlyTransOut">0</span> keluar</span>
                         </div>
                     </div>
                 </div>

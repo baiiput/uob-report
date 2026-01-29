@@ -273,7 +273,7 @@ function initEventListeners() {
         state.filters.month = e.target.value;
         if (e.target.value) {
             loadMonthlySummary(e.target.value);
-            elements.monthlyCards.style.display = 'grid';
+            elements.monthlyCards.style.display = 'flex';
         } else {
             elements.monthlyCards.style.display = 'none';
         }
