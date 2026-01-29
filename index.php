@@ -154,7 +154,18 @@
                         </div>
                     </div>
                     <div class="filter-inline">
-                        <select id="typeFilter">
+                        <div class="tipe-dropdown" id="tipeDropdown">
+                            <button type="button" class="tipe-dropdown-btn" id="tipeDropdownBtn">
+                                <span id="tipeDropdownLabel">Semua Tipe</span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2.5 4.5L6 8l3.5-3.5"/></svg>
+                            </button>
+                            <div class="tipe-dropdown-menu" id="tipeDropdownMenu">
+                                <div class="tipe-option active" data-value="">Semua Tipe</div>
+                                <div class="tipe-option" data-value="pemasukan"><span class="tipe-dot pemasukan"></span> Pemasukan</div>
+                                <div class="tipe-option" data-value="pengeluaran"><span class="tipe-dot pengeluaran"></span> Pengeluaran</div>
+                            </div>
+                        </div>
+                        <select id="typeFilter" style="display:none;">
                             <option value="">Semua Tipe</option>
                             <option value="pemasukan">Pemasukan</option>
                             <option value="pengeluaran">Pengeluaran</option>

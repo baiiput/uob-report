@@ -122,6 +122,17 @@ function handleGet(PDO $pdo): void {
         }
     }
 
+    // Paket filter (multi-select, comma-separated)
+    if (!empty($_GET['paket'])) {
+        $paketValues = explode(',', $_GET['paket']);
+        $paketConditions = [];
+        foreach ($paketValues as $pv) {
+            $paketConditions[] = "deskripsi LIKE ?";
+            $params[] = '%' . trim($pv) . '%';
+        }
+        $where[] = '(' . implode(' OR ', $paketConditions) . ')';
+    }
+
     $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
 
     // Pagination

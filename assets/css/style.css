@@ -722,6 +722,100 @@ button, a, input, select, textarea {
     color: var(--primary);
 }
 
+/* Tipe Dropdown */
+.tipe-dropdown {
+    position: relative;
+}
+
+.tipe-dropdown-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.tipe-dropdown-btn:hover,
+.tipe-dropdown-btn.open {
+    border-color: var(--primary);
+    color: var(--text-primary);
+}
+
+.tipe-dropdown-btn.has-selection {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: #fff;
+}
+
+.tipe-dropdown-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.tipe-dropdown-btn.open svg {
+    transform: rotate(180deg);
+}
+
+.tipe-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.35rem);
+    left: 0;
+    min-width: 150px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0.35rem 0;
+}
+
+.tipe-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.tipe-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+}
+
+.tipe-option:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.tipe-option.active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.tipe-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.tipe-dot.pemasukan { background-color: var(--income-color); }
+.tipe-dot.pengeluaran { background-color: var(--expense-color); }
+
 /* Table Section */
 .table-section {
     background-color: var(--bg-secondary);

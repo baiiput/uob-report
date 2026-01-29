@@ -64,6 +64,10 @@ const elements = {
     paketDropdownLabel: document.getElementById('paketDropdownLabel'),
     paketDropdownMenu: document.getElementById('paketDropdownMenu'),
     paketClearBtn: document.getElementById('paketClearBtn'),
+    tipeDropdown: document.getElementById('tipeDropdown'),
+    tipeDropdownBtn: document.getElementById('tipeDropdownBtn'),
+    tipeDropdownLabel: document.getElementById('tipeDropdownLabel'),
+    tipeDropdownMenu: document.getElementById('tipeDropdownMenu'),
 
     // Pagination
     prevPage: document.getElementById('prevPage'),
@@ -377,11 +381,15 @@ function initEventListeners() {
         btn.classList.toggle('open');
     });
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     document.addEventListener('click', (e) => {
         if (!elements.paketDropdown.contains(e.target)) {
             elements.paketDropdownMenu.classList.remove('show');
             elements.paketDropdownBtn.classList.remove('open');
+        }
+        if (!elements.tipeDropdown.contains(e.target)) {
+            elements.tipeDropdownMenu.classList.remove('show');
+            elements.tipeDropdownBtn.classList.remove('open');
         }
     });
 
@@ -398,14 +406,49 @@ function initEventListeners() {
         updatePaketFilter();
     });
 
+    // Tipe dropdown toggle
+    elements.tipeDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        elements.tipeDropdownMenu.classList.toggle('show');
+        elements.tipeDropdownBtn.classList.toggle('open');
+    });
+
+    // Tipe option click
+    elements.tipeDropdownMenu.addEventListener('click', (e) => {
+        const option = e.target.closest('.tipe-option');
+        if (!option) return;
+        const value = option.dataset.value;
+        // Update hidden select for compatibility
+        elements.typeFilter.value = value;
+        state.filters.type = value;
+        state.currentPage = 1;
+        state.showAll = false;
+        // Update active state
+        elements.tipeDropdownMenu.querySelectorAll('.tipe-option').forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        // Update button label
+        elements.tipeDropdownLabel.textContent = option.textContent.trim();
+        elements.tipeDropdownBtn.classList.toggle('has-selection', !!value);
+        // Close menu
+        elements.tipeDropdownMenu.classList.remove('show');
+        elements.tipeDropdownBtn.classList.remove('open');
+        loadTransactions();
+    });
+
     // Reset filters
     elements.resetFilters.addEventListener('click', () => {
         elements.searchInput.value = '';
         elements.startDate.value = '';
         elements.endDate.value = '';
         elements.typeFilter.value = '';
+        // Reset paket dropdown
         elements.paketDropdownMenu.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
         updatePaketLabel([]);
+        // Reset tipe dropdown
+        elements.tipeDropdownMenu.querySelectorAll('.tipe-option').forEach(o => o.classList.remove('active'));
+        elements.tipeDropdownMenu.querySelector('[data-value=""]').classList.add('active');
+        elements.tipeDropdownLabel.textContent = 'Semua Tipe';
+        elements.tipeDropdownBtn.classList.remove('has-selection');
         state.filters = { search: '', startDate: '', endDate: '', type: '', month: state.filters.month, paket: [] };
         state.currentPage = 1;
         state.showAll = false;
@@ -1001,6 +1044,7 @@ async function loadTransactions() {
         if (state.filters.startDate) params.append('start_date', state.filters.startDate);
         if (state.filters.endDate) params.append('end_date', state.filters.endDate);
         if (state.filters.type) params.append('type', state.filters.type);
+        if (state.filters.paket && state.filters.paket.length > 0) params.append('paket', state.filters.paket.join(','));
 
         const data = await apiCall(`?${params.toString()}`);
 
@@ -1018,16 +1062,7 @@ async function loadTransactions() {
 function renderTransactions() {
     const colspan = state.canEdit ? '7' : '6';
 
-    let transactions = state.transactions;
-
-    // Client-side paket filter (multi-select)
-    if (state.filters.paket && state.filters.paket.length > 0) {
-        const paketFilters = state.filters.paket.map(p => p.toLowerCase());
-        transactions = transactions.filter(trans => {
-            const desc = (trans.deskripsi || '').toLowerCase();
-            return paketFilters.some(p => desc.includes(p));
-        });
-    }
+    const transactions = state.transactions;
 
     if (transactions.length === 0) {
         elements.transactionsBody.innerHTML = `<tr><td colspan="${colspan}" class="empty">Tidak ada transaksi</td></tr>`;
