@@ -1134,9 +1134,13 @@ function formatDescriptionDisplay(desc) {
     // Build structured HTML
     let html = '<div class="desc-structured">';
 
-    // Header with type and client name
+    // Header: type • kode  client
     html += '<div class="desc-header">';
     html += `<span class="desc-type ${parsed.typeClass}">${escapeHtml(parsed.type)}</span>`;
+    if (parsed.kode) {
+        html += `<span class="desc-separator">•</span>`;
+        html += `<span class="desc-kode">${escapeHtml(parsed.kode)}</span>`;
+    }
     if (parsed.client) {
         html += `<span class="desc-client">${escapeHtml(parsed.client)}</span>`;
     }
@@ -1155,11 +1159,6 @@ function formatDescriptionDisplay(desc) {
             html += '</div>';
         });
         html += '</div>';
-
-        // Location code (outside kit details, on its own line)
-        if (parsed.kode) {
-            html += `<div class="desc-kode">${escapeHtml(parsed.kode)}</div>`;
-        }
     }
 
     html += '</div>';
