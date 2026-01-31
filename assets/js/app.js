@@ -1211,14 +1211,14 @@ function parseDescriptionForDisplay(desc) {
         remaining = remaining.slice(0, -kodeMatch[0].length).trim();
     }
 
-    // Extract paket(s) after " - "
-    const paketMatch = remaining.match(/\s+-\s+(.+)$/i);
+    // Extract paket(s) after "KIT...) - paket"
+    const paketMatch = remaining.match(/\)\s*-\s+(.+)$/i);
     let pakets = [];
     if (paketMatch) {
         const paketStr = paketMatch[1].trim();
         // Normalize paket name
         pakets = [normalizePaket(paketStr)];
-        remaining = remaining.slice(0, -paketMatch[0].length).trim();
+        remaining = remaining.slice(0, remaining.lastIndexOf(paketMatch[0]) + 1).trim();
     }
 
     // Extract all KIT IDs
@@ -1377,8 +1377,8 @@ function parseDescription(desc) {
     }
 
     // Handle Payment/Aktivasi/Refund patterns
-    // Pattern: "Payment Nama (KIT123) - paket (kode)" or "Payment Nama (extra) (KIT123) - paket (kode)"
-    const mainPattern = /^(Payment|Aktivasi|Refund)\s+(.+?)\s+\(?(KIT[A-Z0-9]+)\)?\s*-\s*(\w+)\s*\((\d+)\)$/i;
+    // Pattern: "Payment Nama (KIT123) - paket (kode)"
+    const mainPattern = /^(Payment|Aktivasi|Refund)\s+(.+?)\s+\(?(KIT[A-Z0-9]+)\)?\s*-\s*(.+?)\s*\((\d{4})\)$/i;
     const match = desc.match(mainPattern);
 
     if (match) {
@@ -1388,7 +1388,7 @@ function parseDescription(desc) {
             success: true,
             type: capitalizeFirst(match[1].toLowerCase()),
             nama: nama,
-            kits: [{ kit: match[3].toUpperCase(), paket: match[4].toLowerCase() }],
+            kits: [{ kit: match[3].toUpperCase(), paket: normalizePaket(match[4].trim()) }],
             kode: match[5]
         };
     }
