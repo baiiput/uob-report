@@ -914,6 +914,16 @@ button, a, input, select, textarea {
     color: var(--danger);
 }
 
+/* Mobile combined nominal column */
+.col-nominal {
+    display: none;
+}
+
+.nominal-icon {
+    font-weight: 700;
+    margin-right: 0.25rem;
+}
+
 /* Action buttons in table */
 .action-buttons {
     display: flex;
@@ -1554,6 +1564,17 @@ form {
     .data-table td {
         padding: 0.625rem 0.5rem;
         font-size: 0.8125rem;
+    }
+
+    /* Mobile: merge pemasukan/pengeluaran into single Nominal column */
+    .col-pemasukan,
+    .col-pengeluaran {
+        display: none !important;
+    }
+
+    .col-nominal {
+        display: table-cell !important;
+        white-space: nowrap;
     }
 
     .form-row {

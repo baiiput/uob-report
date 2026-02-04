@@ -1099,11 +1099,16 @@ function renderTransactions() {
             <td>${startNo + index}</td>
             <td>${formatDate(trans.tanggal)}</td>
             <td class="description-cell">${formatDescriptionDisplay(trans.deskripsi)}</td>
-            <td class="text-right ${trans.pemasukan > 0 ? 'amount-income' : ''}">
+            <td class="text-right col-pemasukan ${trans.pemasukan > 0 ? 'amount-income' : ''}">
                 ${trans.pemasukan > 0 ? formatRupiah(trans.pemasukan) : '-'}
             </td>
-            <td class="text-right ${trans.pengeluaran > 0 ? 'amount-expense' : ''}">
+            <td class="text-right col-pengeluaran ${trans.pengeluaran > 0 ? 'amount-expense' : ''}">
                 ${trans.pengeluaran > 0 ? formatRupiah(trans.pengeluaran) : '-'}
+            </td>
+            <td class="text-right col-nominal ${trans.pemasukan > 0 ? 'amount-income' : 'amount-expense'}">
+                ${trans.pemasukan > 0
+                    ? '<span class="nominal-icon">↑</span>' + formatRupiah(trans.pemasukan)
+                    : '<span class="nominal-icon">↓</span>' + formatRupiah(trans.pengeluaran)}
             </td>
             <td class="text-right amount-balance ${trans.saldo < 0 ? 'amount-negative' : ''}">
                 ${formatRupiah(trans.saldo)}

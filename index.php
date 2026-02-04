@@ -190,8 +190,9 @@
                                 <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Deskripsi</th>
-                                <th class="text-right">Pemasukan</th>
-                                <th class="text-right">Pengeluaran</th>
+                                <th class="text-right col-pemasukan">Pemasukan</th>
+                                <th class="text-right col-pengeluaran">Pengeluaran</th>
+                                <th class="text-right col-nominal">Nominal</th>
                                 <th class="text-right">Saldo</th>
                                 <th id="actionHeader">Aksi</th>
                             </tr>
