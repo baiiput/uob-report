@@ -57,6 +57,8 @@
 html {
     font-size: 16px;
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    touch-action: pan-x pan-y;
 }
 
 body {
@@ -66,6 +68,7 @@ body {
     line-height: 1.6;
     min-height: 100vh;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
 }
 
 /* App Container */
