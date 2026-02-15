@@ -1216,31 +1216,32 @@ function parseDescriptionForDisplay(desc) {
         remaining = remaining.slice(0, -kodeMatch[0].length).trim();
     }
 
-    // Extract paket(s) after "KIT...) - paket"
-    const paketMatch = remaining.match(/\)\s*-\s+(.+)$/i);
-    let pakets = [];
-    if (paketMatch) {
-        const paketStr = paketMatch[1].trim();
-        // Normalize paket name
-        pakets = [normalizePaket(paketStr)];
-        remaining = remaining.slice(0, remaining.lastIndexOf(paketMatch[0]) + 1).trim();
-    }
+    // Extract client name (everything before first KIT)
+    let clientName = remaining.split(/\(?\s*KIT/i)[0].trim();
 
-    // Extract all KIT IDs
-    const kitMatches = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/gi);
+    // Extract all KIT-paket pairs: "(KITxxx) - paketname"
     const kits = [];
-    if (kitMatches) {
-        kitMatches.forEach((km, index) => {
-            const kitId = km.replace(/[()]/g, '').toUpperCase();
-            kits.push({
-                kit: kitId,
-                paket: pakets[index] || pakets[0] || null
-            });
+    const kitPaketRegex = /\(?(KIT[A-Z0-9]+)\)?\s*-\s*([^(]+?)(?=\s*\(?KIT|\s*$)/gi;
+    let m;
+    while ((m = kitPaketRegex.exec(remaining)) !== null) {
+        kits.push({
+            kit: m[1].toUpperCase(),
+            paket: normalizePaket(m[2].trim())
         });
     }
 
-    // Extract client name (everything before first KIT)
-    let clientName = remaining.split(/\(?\s*KIT/i)[0].trim();
+    // Fallback: if no kit-paket pairs found, try extracting just KIT IDs
+    if (kits.length === 0) {
+        const kitMatches = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/gi);
+        if (kitMatches) {
+            kitMatches.forEach(km => {
+                kits.push({
+                    kit: km.replace(/[()]/g, '').toUpperCase(),
+                    paket: null
+                });
+            });
+        }
+    }
 
     if (clientName || kits.length > 0) {
         return {
@@ -1382,41 +1383,42 @@ function parseDescription(desc) {
     }
 
     // Handle Payment/Aktivasi/Refund patterns
-    // Pattern: "Payment Nama (KIT123) - paket (kode)"
-    const mainPattern = /^(Payment|Aktivasi|Refund)\s+(.+?)\s+\(?(KIT[A-Z0-9]+)\)?\s*-\s*(.+?)\s*\((\d{4})\)$/i;
-    const match = desc.match(mainPattern);
+    const typePattern = /^(Payment|Aktivasi|Refund)\s+(.+)/i;
+    const typeMatch = desc.match(typePattern);
+    if (typeMatch) {
+        let remaining = typeMatch[2];
 
-    if (match) {
-        let nama = match[2].trim();
+        // Extract kode from end
+        const kodeMatch = remaining.match(/\((\d{4})\)\s*$/);
+        const kode = kodeMatch ? kodeMatch[1] : '0900';
+        if (kodeMatch) remaining = remaining.slice(0, -kodeMatch[0].length).trim();
 
-        return {
-            success: true,
-            type: capitalizeFirst(match[1].toLowerCase()),
-            nama: nama,
-            kits: [{ kit: match[3].toUpperCase(), paket: normalizePaket(match[4].trim()) }],
-            kode: match[5]
-        };
-    }
+        // Extract client name (before first KIT)
+        const nama = remaining.split(/\(?\s*KIT/i)[0].trim();
 
-    // Try simpler pattern for edge cases
-    const simplePattern = /^(Payment|Aktivasi|Refund)\s+(.+)/i;
-    const simpleMatch = desc.match(simplePattern);
-    if (simpleMatch) {
-        // Try to extract kit and paket from remaining text
-        const remaining = simpleMatch[2];
-        const kitMatch = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/i);
-        const paketMatch = remaining.match(/\b(regular|reguler|roam|lite|residensial|local priority|local|international|internasional|inter)\b/i);
-        const kodeMatch = remaining.match(/\((\d{4})\)/);
+        // Extract all KIT-paket pairs
+        const kits = [];
+        const kitPaketRegex = /\(?(KIT[A-Z0-9]+)\)?\s*-\s*([^(]+?)(?=\s*\(?KIT|\s*$)/gi;
+        let m;
+        while ((m = kitPaketRegex.exec(remaining)) !== null) {
+            kits.push({ kit: m[1].toUpperCase(), paket: normalizePaket(m[2].trim()) });
+        }
 
-        if (kitMatch) {
-            let nama = remaining.split(/\(?KIT/i)[0].trim();
+        // Fallback: just KIT IDs without paket
+        if (kits.length === 0) {
+            const kitOnly = remaining.match(/\(?(KIT[A-Z0-9]+)\)?/i);
+            if (kitOnly) {
+                kits.push({ kit: kitOnly[1].toUpperCase(), paket: 'regular' });
+            }
+        }
 
+        if (kits.length > 0) {
             return {
                 success: true,
-                type: capitalizeFirst(simpleMatch[1].toLowerCase()),
+                type: capitalizeFirst(typeMatch[1].toLowerCase()),
                 nama: nama,
-                kits: [{ kit: kitMatch[1].toUpperCase(), paket: paketMatch ? normalizePaket(paketMatch[1]) : 'regular' }],
-                kode: kodeMatch ? kodeMatch[1] : '0900'
+                kits: kits,
+                kode: kode
             };
         }
     }
